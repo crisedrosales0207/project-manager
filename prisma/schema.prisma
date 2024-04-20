@@ -1,0 +1,50 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// generate a user table for prisma schema with id, username, email, first name, last name and avatar url
+model User {
+  id        Int       @id @default(autoincrement())
+  username  String    @unique
+  email     String    @unique
+  password  String  @unique
+  firstName String?
+  lastName  String?
+  avatarUrl String?
+  role      String @default("USER")
+  Project   Project[]
+}
+
+// generate a project table for prisma schema with id_project, name, description, start date, end date, status, and user id
+model Project {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String
+  startDate   DateTime
+  endDate     DateTime
+  status      Boolean
+  progress    Float
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+  Task        Task[]
+}
+
+// generate a task table for prisma schema with id_task, name, description, start date, end date, status, and project id
+model Task {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  startDate   DateTime
+  endDate     DateTime
+  status      Boolean
+  projectId   Int
+  project     Project  @relation(fields: [projectId], references: [id])
+}
